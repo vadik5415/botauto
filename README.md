@@ -90,12 +90,16 @@ OPENROUTER_APP_NAME=ai-car-consultant-bot
 
 > Логика бота не меняется: меняется только провайдер и модель в env.
 
-## 5) Тесты
+## 5) CI (для GitHub merge requirements)
+- В репозитории добавлен workflow `.github/workflows/ci.yml`.
+- Проверки: установка зависимостей, `compileall`, `pytest`.
+
+## 6) Тесты
 ```bash
 pytest -q
 ```
 
-## 6) Миграции
+## 7) Миграции
 - Конфиг: `alembic.ini`
 - Версии: `database/migrations/versions`
 
