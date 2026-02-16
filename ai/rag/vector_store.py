@@ -1,3 +1,9 @@
+from typing import Dict, List, Optional
+
+import chromadb
+from chromadb.config import Settings
+
+from ai.rag.embeddings import build_embeddings
 from typing import Dict, List
 
 import chromadb
@@ -8,6 +14,13 @@ from langchain_openai import OpenAIEmbeddings
 class VectorStore:
     """Векторное хранилище для RAG."""
 
+    def __init__(
+        self,
+        persist_directory: str = "./chroma_db",
+        embedding_model: str = "text-embedding-3-small",
+        embedding_api_key: Optional[str] = None,
+        embedding_base_url: Optional[str] = None,
+    ):
     def __init__(self, persist_directory: str = "./chroma_db", embedding_model: str = "text-embedding-3-small"):
         self.client = chromadb.PersistentClient(
             path=persist_directory,
@@ -16,6 +29,11 @@ class VectorStore:
         self.car_collection = self.client.get_or_create_collection("car_knowledge")
         self.customs_collection = self.client.get_or_create_collection("customs_info")
         self.faq_collection = self.client.get_or_create_collection("faq")
+        self.embeddings = build_embeddings(
+            model=embedding_model,
+            api_key=embedding_api_key,
+            base_url=embedding_base_url,
+        )
         self.embeddings = OpenAIEmbeddings(model=embedding_model)
 
     def add_documents(self, collection_name: str, documents: List[Dict]) -> None:

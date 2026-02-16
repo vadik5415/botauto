@@ -8,6 +8,43 @@ logger = structlog.get_logger()
 
 
 class LLMClient:
+    """Клиент для работы с OpenAI/OpenRouter через OpenAI-совместимый API."""
+
+    def __init__(
+        self,
+        api_key: str,
+        model: str = "gpt-4o-mini",
+        provider: str = "openai",
+        base_url: Optional[str] = None,
+        temperature: float = 0.7,
+        max_tokens: int = 1000,
+        request_timeout: int = 30,
+        app_name: str = "ai-car-consultant-bot",
+        site_url: Optional[str] = None,
+    ):
+        self.api_key = api_key
+        self.model = model
+        self.provider = provider
+
+        client_kwargs: Dict = {
+            "api_key": api_key,
+            "model": model,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "request_timeout": request_timeout,
+        }
+
+        if base_url:
+            client_kwargs["base_url"] = base_url
+
+        # OpenRouter рекомендует передавать служебные заголовки для трекинга приложения.
+        if provider == "openrouter":
+            default_headers = {"X-Title": app_name}
+            if site_url:
+                default_headers["HTTP-Referer"] = site_url
+            client_kwargs["default_headers"] = default_headers
+
+        self.client = ChatOpenAI(**client_kwargs)
     """Клиент для работы с OpenAI GPT моделями."""
 
     def __init__(self, api_key: str, model: str = "gpt-4o-mini"):
@@ -48,11 +85,13 @@ class LLMClient:
 
             logger.info(
                 "ai_response_generated",
+                provider=self.provider,
                 model=self.model,
                 tokens=response.response_metadata.get("token_usage", {}),
             )
             return response.content
         except Exception as exc:
+            logger.error("ai_generation_failed", provider=self.provider, error=str(exc))
             logger.error("ai_generation_failed", error=str(exc))
             return "Извините, AI временно недоступен. Давайте продолжим: уточните бюджет и желаемую модель."
 
