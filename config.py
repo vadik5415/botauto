@@ -32,6 +32,8 @@ class Settings(BaseSettings):
     embedding_api_key: Optional[str] = None
     embedding_base_url: Optional[str] = None
 
+    openai_api_key: str
+    openai_model: str = "gpt-4o-mini"
     database_url: str
     redis_url: str
     environment: str = "development"
@@ -40,6 +42,7 @@ class Settings(BaseSettings):
     manager_chat_id: int = 0
     notification_priority_threshold: int = 7
     vector_db_path: str = "./chroma_db"
+    embedding_model: str = "text-embedding-3-small"
     default_company_commission: float = 2500.0
     default_shipping_buffer: float = 1.1
     max_requests_per_minute: int = 20
@@ -83,3 +86,5 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     """Лениво загружает настройки приложения."""
     return Settings()
+
+settings = Settings()

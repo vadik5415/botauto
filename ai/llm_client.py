@@ -45,6 +45,18 @@ class LLMClient:
             client_kwargs["default_headers"] = default_headers
 
         self.client = ChatOpenAI(**client_kwargs)
+    """Клиент для работы с OpenAI GPT моделями."""
+
+    def __init__(self, api_key: str, model: str = "gpt-4o-mini"):
+        self.api_key = api_key
+        self.model = model
+        self.client = ChatOpenAI(
+            api_key=api_key,
+            model=model,
+            temperature=0.7,
+            max_tokens=1000,
+            request_timeout=30,
+        )
 
     async def generate_response(
         self,
@@ -80,6 +92,7 @@ class LLMClient:
             return response.content
         except Exception as exc:
             logger.error("ai_generation_failed", provider=self.provider, error=str(exc))
+            logger.error("ai_generation_failed", error=str(exc))
             return "Извините, AI временно недоступен. Давайте продолжим: уточните бюджет и желаемую модель."
 
     async def generate_with_tools(self, system_prompt: str, user_message: str, tools: List[Dict]) -> Dict:

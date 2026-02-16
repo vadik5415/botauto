@@ -15,3 +15,9 @@ def build_embeddings(
     if base_url:
         kwargs["base_url"] = base_url
     return OpenAIEmbeddings(**kwargs)
+from langchain_openai import OpenAIEmbeddings
+
+
+def build_embeddings(model: str = "text-embedding-3-small") -> OpenAIEmbeddings:
+    """Создает embedding-клиент для RAG."""
+    return OpenAIEmbeddings(model=model)

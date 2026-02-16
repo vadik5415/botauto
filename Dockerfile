@@ -5,6 +5,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1
 
 RUN addgroup --system app && adduser --system --ingroup app app
+FROM python:3.11-slim
+
 WORKDIR /app
 
 COPY requirements.txt ./
